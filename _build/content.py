@@ -1,0 +1,197 @@
+# Inhoud van de Blauweschild-website. Pas teksten hier aan en draai daarna:
+#   python3 _build/build.py
+# De HTML-pagina's worden dan opnieuw gemaakt.
+
+TEL = "085 060 5985"
+TEL_HREF = "tel:+31850605985"
+MAIL = "blauweschildongedierte@gmail.com"
+KVK = None  # vul hier je KvK-nummer in als tekst, bijvoorbeeld "12345678"
+
+STEPS = [
+    ("Inspectie", "We bepalen de soort, de omvang en hoe het dier binnenkomt."),
+    ("Plan", "Je krijgt vooraf een duidelijk voorstel met aanpak en prijs."),
+    ("Bestrijding", "Gericht en zo veilig mogelijk voor kinderen en huisdieren."),
+    ("Preventie", "Toegang afsluiten, controlebezoek en advies om herhaling te voorkomen."),
+]
+
+WHY = [
+    ("24 uur", "Snelle service", "Binnen 24 uur bij je ter plaatse. Bij spoed helpen we je dezelfde dag nog."),
+    ("Discreet", "Onopvallend", "Onopvallende voertuigen en een discrete werkwijze. Je privacy is gewaarborgd."),
+    ("Garantie", "Op resultaat", "Komt het ongedierte binnen de garantieperiode terug? Dan komen we kosteloos terug."),
+    ("10+ jaar", "Ervaren specialisten", "Gecertificeerde specialisten met meer dan tien jaar ervaring in ongediertebestrijding."),
+]
+
+STATS = [
+    ("200+", "Klanten geholpen"),
+    ("10+", "Jaar ervaring"),
+    ("7/7", "Bereikbaar 08:00–17:00"),
+    ("4,9", "Google-score"),
+]
+
+REVIEWS = [
+    ("Uitstekende service! Binnen een paar uur waren ze ter plaatse en het rattenprobleem was snel opgelost. Zeer professioneel team.", "Henk Janssen", "Utrecht", "ratten"),
+    ("We hadden al weken last van bedwantsen. Na één behandeling was het probleem volledig verholpen. Heel blij met het resultaat!", "Annemieke van Dijk", "Helmond", "bedwantsen"),
+    ("Snel, discreet en effectief. Het wespennest werd dezelfde dag nog verwijderd. Aanrader!", "Rob Willems", "Veldhoven", "wespen"),
+    ("Na maanden muizenoverlast hebben zij het probleem in één keer opgelost. Ook het huis muisdicht gemaakt. Top service.", "Fatima El Amrani", "Best", "muizen"),
+    ("Goede communicatie en snelle afhandeling van het mierenprobleem. De mieren zijn volledig verdwenen.", "Marco de Groot", "Nuenen", "mieren"),
+]
+
+FAQ = [
+    ("Wat kost ongediertebestrijding?", "Dat hangt af van het soort ongedierte, hoe ernstig de plaag is en hoe groot de ruimte is. Na de inspectie krijg je een vrijblijvende offerte. We werken met duidelijke prijzen, zonder verborgen kosten."),
+    ("Hoe snel kunnen jullie komen?", "Bij een gewone melding zijn we binnen 24 uur bij je. Bij spoed helpen we je dezelfde dag nog. Bel ons voor de snelste beschikbaarheid."),
+    ("Is de bestrijding veilig voor kinderen en huisdieren?", "Ja. We werken volgens IPM en gebruiken alleen middelen waar het nodig is, op een manier die veilig is voor je gezin en huisdieren. Je hoort vooraf welke voorzorgsmaatregelen je kunt nemen."),
+    ("Geven jullie garantie?", "Ja, we geven garantie op al onze behandelingen. Komt het ongedierte binnen de garantieperiode terug, dan komen we kosteloos terug om het opnieuw te behandelen."),
+    ("Werken jullie ook in het weekend?", "Ja, we zijn 7 dagen per week bereikbaar van 08:00 tot 17:00. Bij spoed kun je ons ook buiten deze tijden bellen."),
+    ("Moet ik mijn huis uit tijdens de behandeling?", "Dat hangt af van de behandeling. Bij de meeste behandelingen kun je gewoon thuisblijven. Onze specialist vertelt je vooraf wat je kunt verwachten."),
+]
+
+# Volgorde = volgorde in menu en overzichten
+PESTS = [
+  dict(slug="muizen", name="Muizen", lat="Mus musculus", spoed=False, urg="Binnen een week",
+    title="Muizenbestrijding",
+    kort="Kruipen door een opening van 6 mm. We vinden de route en dichten kieren met staalwol en kit.",
+    lead="Effectieve muizenbestrijding met blijvend resultaat. We vinden waar ze binnenkomen, pakken de plaag aan en maken je huis muisdicht.",
+    intro="Muizen zijn een van de meest voorkomende plaagdieren in Nederlandse huizen. Ze knagen aan alles, vervuilen voedsel en kunnen ziektes overdragen. Doordat ze zo klein zijn, komen ze door de kleinste openingen binnen: een kier van 6 à 7 millimeter is al genoeg. Als het kouder wordt, trekken ze naar binnen op zoek naar warmte en eten.",
+    snel="Eén muizenpaar kan in een jaar uitgroeien tot meer dan 2.000 nakomelingen. Hoe langer je wacht, hoe groter het probleem. Op tijd ingrijpen voorkomt dat het uit de hand loopt.",
+    gevaren=["Verspreiding van ziektes via uitwerpselen en urine", "Schade aan bedrading en isolatiemateriaal", "Vervuiling van voedselvoorraden", "Snelle voortplanting, tot 10 worpen per jaar"],
+    aanpak="We beginnen met een grondige inspectie en zoeken de looproutes en toegangen. Daarna kiezen we de beste aanpak met professionele vallen en bestrijdingsmiddelen, en dichten we kieren en doorvoeren met staalwol en kit. Je krijgt advies om je woning muisdicht te houden.",
+    ticks=["Snelle en effectieve bestrijding", "Kieren en doorvoeren muisdicht maken", "Veilig voor kinderen en huisdieren", "Nazorg en garantie"],
+    signs=["Kleine zwarte keutels, zo groot als een rijstkorrel", "Knaagsporen aan verpakkingen en snoeren", "Geritsel in plafond of spouw"],
+    big=("2.000+", "nakomelingen per jaar uit één muizenpaar"),
+    faq=[
+      ("Hoe komen muizen mijn huis binnen?", "Muizen passen door openingen van maar 6 à 7 millimeter. Ze komen binnen via scheuren in de gevel, openingen rond leidingen, onder deuren door en via het riool."),
+      ("Zijn muizen gevaarlijk?", "Ja. Muizen kunnen ziektes overdragen via uitwerpselen, urine en speeksel. Daarnaast knagen ze aan bedrading en isolatie."),
+      ("Hoe snel zijn de muizen weg na de behandeling?", "Na een professionele behandeling zijn de meeste muizen binnen 1 à 2 weken verdwenen. We controleren het resultaat en komen terug als dat nodig is."),
+      ("Wat kost muizenbestrijding?", "Dat hangt af van de omvang van het probleem. Neem contact op voor een vrijblijvende prijsopgave."),
+    ]),
+  dict(slug="ratten", name="Ratten", lat="Rattus norvegicus", spoed=True, urg="Snel laten bekijken",
+    title="Rattenbestrijding",
+    kort="Vaak via riolering of tuin. Camera-inspectie van het riool en rattenkleppen waar nodig.",
+    lead="Ratten zijn een ernstig gezondheidsrisico en richten schade aan in en rond je woning. Snel handelen is belangrijk: bij spoed komen we dezelfde dag.",
+    intro="Ratten zijn slimme knaagdieren die flinke schade kunnen aanrichten aan je woning, bedrading en leidingen. Ze verspreiden ziektes en planten zich snel voort. Vaak komen ze binnen via een kapotte rioolbuis of vanuit de tuin.",
+    snel="Ratten krijgen tot 12 jongen per worp en zijn na zo'n 3 maanden al geslachtsrijp. Eén stel ratten kan binnen een jaar uitgroeien tot een kolonie van honderden dieren.",
+    gevaren=["Verspreiding van ernstige ziektes, zoals de ziekte van Weil en salmonella", "Schade aan bedrading, leidingen en isolatie", "Brandgevaar door aangevreten kabels", "Vervuiling van voedsel en oppervlakken"],
+    aanpak="We starten met een grondige inspectie om de omvang van het probleem vast te stellen, waar nodig met een camera-inspectie van het riool. Daarna plaatsen we professionele bestrijdingsmiddelen en sluiten we de toegangen af, zo nodig met een rattenklep. We controleren het resultaat en geven garantie.",
+    ticks=["Grondige inspectie en probleemanalyse", "Camera-inspectie van het riool", "Toegangen afsluiten en rattenkleppen plaatsen", "Controle en garantie op resultaat"],
+    signs=["Keutels van 1 tot 2 cm", "Vette donkere vegen langs muren", "Geluid in muren of plafond, vooral 's nachts"],
+    big=("12", "jongen per worp, geslachtsrijp na 3 maanden"),
+    faq=[
+      ("Hoe weet ik of ik ratten heb?", "Let op donkere keutels van 1 à 2 cm, knaagsporen, geluid in muren of plafonds (vooral 's nachts), vette strepen langs muren en een muffe geur."),
+      ("Hoe snel kunnen jullie komen?", "We hebben een spoedservice en zijn in de meeste gevallen binnen 24 uur bij je, bij spoed dezelfde dag."),
+      ("Is rattenbestrijding veilig voor huisdieren?", "Ja. We werken met methoden die veilig zijn voor huisdieren en vertellen je welke voorzorgsmaatregelen je kunt nemen."),
+      ("Hoe voorkom ik ratten in huis?", "Zorg dat voedsel onbereikbaar is, dicht gaten en kieren (ratten passen door een opening van 2 cm) en houd je tuin en omgeving opgeruimd."),
+    ]),
+  dict(slug="wespen", name="Wespen", lat="Vespula vulgaris", spoed=True, urg="Spoed mogelijk",
+    title="Wespennest laten verwijderen",
+    kort="Nest bij dakrand, spouw of schuur. Behandeling dezelfde dag, ook op hoogte.",
+    lead="Een wespennest in of rond je huis is een direct gevaar. We behandelen het veilig, meestal nog dezelfde dag en ook op hoogte.",
+    intro="Wespen kunnen agressief zijn, vooral in de zomer en het najaar. Een nest bij de dakrand, in de spouw of in de schuur is een direct gevaar voor jou en je gezin. Zelf verwijderen is gevaarlijk en raden we sterk af.",
+    snel="Op het hoogtepunt van het seizoen kan een wespennest tot 10.000 wespen bevatten. Hoe verder het seizoen, hoe groter het nest en hoe agressiever de wespen. Vroeg ingrijpen is veiliger en eenvoudiger.",
+    gevaren=["Pijnlijke steken met kans op een allergische reactie", "Gevaar voor kinderen en huisdieren", "Anafylactische shock bij mensen met een allergie", "Agressief gedrag als het nest wordt verstoord"],
+    aanpak="Onze specialisten behandelen het nest veilig en snel, met beschermende kleding en professioneel materiaal, ook als het nest hoog zit. We zorgen dat de hele kolonie wordt bestreden en verwijderen het nest waar dat kan.",
+    ticks=["Veilige behandeling door specialisten", "Meestal dezelfde dag geholpen", "Geen risico voor jou of je gezin", "Advies om nieuwe nesten te voorkomen"],
+    signs=["Veel wespen in en uit één opening", "Zoemend geluid in spouw of dak", "Papierachtig nest in schuur, struik of boom"],
+    big=("10.000", "wespen in één nest op het hoogtepunt"),
+    faq=[
+      ("Kan ik een wespennest zelf verwijderen?", "Dat raden we sterk af. Wespen worden agressief als hun nest wordt verstoord. Sluit de opening ook niet zelf af: de wespen zoeken dan een weg naar binnen. Een specialist met beschermende kleding en het juiste materiaal is de veiligste keuze."),
+      ("Hoe snel kunnen jullie een wespennest behandelen?", "Meestal kunnen we dezelfde dag nog langskomen."),
+      ("Wat moet ik doen als ik gestoken word?", "Verwijder de angel als die er nog in zit, koel de plek en neem eventueel een antihistaminicum. Bij een heftige reactie, zoals benauwdheid of zwelling in gezicht of keel, bel je direct 112."),
+      ("Komen de wespen terug na de behandeling?", "Na een professionele behandeling komen de wespen niet terug naar hetzelfde nest. We geven je advies om nieuwe nesten te voorkomen."),
+    ]),
+  dict(slug="bedwantsen", name="Bedwantsen", lat="Cimex lectularius", spoed=True, urg="Snel laten bekijken",
+    title="Bedwantsenbestrijding",
+    kort="Grondige inspectie van bed, naden en plinten, gevolgd door hitte- of middelbehandeling.",
+    lead="Bedwantsen verspreiden zich snel en veroorzaken jeukende beten. Zonder professionele hulp kom je er bijna nooit vanaf. Wij pakken ze aan in alle levensstadia.",
+    intro="Bedwantsen zijn kleine, platte insecten die zich voeden met menselijk bloed. Ze verstoppen zich in matrassen, bedframes, naden en plinten. Vaak neem je ze ongemerkt mee na een vakantie of met tweedehands meubels. Een plaag verspreidt zich snel en is zelf bijna niet te bestrijden.",
+    snel="Bedwantsen vermenigvuldigen zich snel: één vrouwtje legt tot 500 eieren. Hoe langer je wacht, hoe groter en duurder het probleem. Direct handelen bespaart je tijd, geld en stress.",
+    gevaren=["Jeukende, rode beten op de huid", "Slaapproblemen en stress", "Snelle verspreiding door het hele huis", "Allergische reacties bij gevoelige mensen"],
+    aanpak="We inspecteren bed, naden en plinten grondig. Daarna combineren we een warmtebehandeling met gerichte bestrijdingsmiddelen, zodat ook de eieren en jonge bedwantsen worden gedood. We controleren het resultaat en geven garantie.",
+    ticks=["Bestrijding in alle levensstadia, ook de eieren", "Warmtebehandeling waar mogelijk, middelen waar nodig", "Discreet, met onopvallende voertuigen", "Controle en garantie"],
+    signs=["Jeukende bultjes in een rij na het slapen", "Bloed- of zwarte stipjes op het matras", "Platte, bruine insecten van 4 à 7 mm"],
+    big=("500", "eieren per vrouwtje"),
+    faq=[
+      ("Hoe herken ik bedwantsen?", "Bedwantsen zijn platte, ovale insecten van 4 à 7 mm. Je herkent ze aan bloedvlekjes op de lakens, donkere uitwerpselen op het matras en jeukende beten in een rij op je huid."),
+      ("Wat kan ik zelf alvast doen?", "Was beddengoed op 60 °C en neem geen spullen mee naar andere kamers. Bedwantsen verspreiden zich snel via kleding en tassen."),
+      ("Hoe lang duurt een behandeling?", "Gemiddeld 2 à 4 uur, afhankelijk van de ernst van de plaag. In de meeste gevallen is één behandeling genoeg."),
+      ("Kan ik bedwantsen zelf bestrijden?", "Dat is heel lastig. Middelen uit de winkel doden vaak alleen de volwassen bedwantsen, niet de eieren. Een professionele aanpak is de enige effectieve oplossing."),
+      ("Wat kost bedwantsenbestrijding?", "Dat hangt af van de grootte van de ruimte en de ernst van de plaag. Neem contact op voor een vrijblijvende offerte."),
+    ]),
+  dict(slug="vlooien", name="Vlooien", lat="Ctenocephalides felis", spoed=False, urg="Binnen een week",
+    title="Vlooienbestrijding",
+    kort="Huisdier, vloer en meubels in één aanpak, inclusief advies om de cyclus te breken.",
+    lead="Vlooien pak je aan op drie plekken tegelijk: bij je huisdier, op de vloer en in de meubels. Zo breken we de cyclus en blijven ze weg.",
+    intro="De kattenvlo is in Nederland de meest voorkomende vlo, ook bij honden. Volwassen vlooien leven op je huisdier, maar de eitjes, larven en poppen zitten in vloerkleden, naden, kussens en de mand. Daardoor zie je maar een klein deel van de plaag.",
+    snel="Een vlooienvrouwtje legt tientallen eitjes per dag. Poppen kunnen maandenlang in rust blijven tot er een mens of dier langskomt. Wie alleen het huisdier behandelt, krijgt de plaag vaak terug.",
+    gevaren=["Jeukende beten, vaak rond de enkels", "Vlooienallergie en huidontsteking bij huisdieren", "Overdracht van lintworm via vlooien", "Bloedarmoede bij jonge of kleine dieren"],
+    aanpak="We behandelen vloeren, naden, meubels en ligplekken in één keer. Je huisdier laat je tegelijk behandelen via de dierenarts. Je krijgt duidelijk advies over stofzuigen en wassen, zodat een nieuwe generatie geen kans krijgt.",
+    ticks=["Huis en ligplekken in één behandeling", "Afgestemd op de behandeling van je huisdier", "Advies om de cyclus te breken", "Controle en garantie"],
+    signs=["Kleine springende insecten rond de enkels", "Huisdier krabt zich opvallend vaak", "Zwarte korreltjes in vacht of mand"],
+    big=("50", "eitjes per dag, per vrouwtje"),
+    faq=[
+      ("Waarom komen vlooien steeds terug?", "Alleen het huisdier behandelen is meestal niet genoeg. Eitjes en poppen zitten in vloer en meubels en komen later uit. Daarom behandelen we huis en dier tegelijk."),
+      ("Moet ik mijn huisdier ook laten behandelen?", "Ja. Laat je huisdier via de dierenarts behandelen, op hetzelfde moment als de behandeling van je huis."),
+      ("Wat kan ik zelf doen?", "Stofzuig dagelijks, ook naden en kieren, en gooi de stofzuigerzak meteen weg. Was kleden en kussens van je huisdier op 60 °C."),
+      ("Hoe lang duurt het voordat de vlooien weg zijn?", "Na de behandeling kun je nog een paar weken vlooien zien, omdat de laatste poppen uitkomen. Blijf in die periode goed stofzuigen."),
+    ]),
+  dict(slug="mieren", name="Mieren", lat="Lasius niger", spoed=False, urg="Geen haast",
+    title="Mierenbestrijding",
+    kort="We volgen de mierenstraat naar het nest in plaats van alleen de zichtbare mieren te bestrijden.",
+    lead="Een mierenplaag los je op bij het nest, niet bij de mieren die je ziet. Wij bestrijden de hele kolonie, inclusief de koningin.",
+    intro="Mieren leven in grote kolonies en kunnen snel een plaag worden in huis. Ze komen af op voedsel en vocht en leggen geursporen, waardoor steeds meer mieren de weg naar binnen vinden. Middelen uit de supermarkt doden vaak alleen de mieren die je ziet, niet de kolonie.",
+    snel="Een mierenkolonie telt duizenden mieren. Zolang de koningin leeft, blijft de kolonie groeien. Alleen een aanpak bij de bron lost het probleem echt op.",
+    gevaren=["Vervuiling van voedsel", "Schade aan houtwerk door houtmieren", "Overlast door grote aantallen", "Moeilijk zelf te bestrijden door verborgen nesten"],
+    aanpak="We bepalen eerst om welke mierensoort het gaat en volgen de mierenstraat naar het nest. Met professionele lokmiddelen bestrijden we de hele kolonie, inclusief de koningin. Zo voorkom je dat de plaag terugkomt.",
+    ticks=["Bestrijding van de hele kolonie", "Vaststellen van de mierensoort", "Veilig voor kinderen en huisdieren", "Advies om nieuwe overlast te voorkomen"],
+    signs=["Rij mieren langs plint of aanrecht", "Zandhoopjes tussen tegels of voegen", "Vliegende mieren in huis in de zomer"],
+    big=("1", "koningin houdt de hele kolonie in stand"),
+    faq=[
+      ("Waarom werken middelen uit de supermarkt niet?", "Die doden vaak alleen de mieren die je ziet. De kolonie en de koningin blijven over, waardoor het probleem steeds terugkomt. Professionele lokmiddelen bereiken de hele kolonie."),
+      ("Hoe lang duurt mierenbestrijding?", "Het plaatsen van de middelen duurt 30 à 60 minuten. Het volledige effect zie je binnen 1 à 2 weken, als de hele kolonie is bestreden."),
+      ("Kunnen mieren schade aan mijn huis veroorzaken?", "Ja, vooral de houtmier (Camponotus) kan houten constructies aantasten. Vermoed je houtmieren, laat het dan snel bekijken."),
+      ("Hoe voorkom ik mieren in huis?", "Houd de keuken schoon, bewaar voedsel in afgesloten bakken, dicht kieren en naden en snoei takken die tegen de gevel aan groeien."),
+    ]),
+  dict(slug="kakkerlakken", name="Kakkerlakken", lat="Blattella germanica", spoed=True, urg="Snel laten bekijken",
+    title="Kakkerlakkenbestrijding",
+    kort="Gelbehandeling op schuilplekken in keukens en bedrijfsruimtes, met controlebezoek.",
+    lead="Kakkerlakken zijn een serieus hygiënerisico. We bestrijden ze in alle levensstadia, discreet en met controlebezoek. Ook voor bedrijfskeukens.",
+    intro="Kakkerlakken verspreiden bacteriën, vervuilen voedsel en vermenigvuldigen zich snel. Ze houden van warmte en vocht en verstoppen zich overdag in kieren, achter de koelkast of in apparaten. Een plaag in een woning of bedrijfskeuken vraagt om een professionele aanpak.",
+    snel="Eén kakkerlak kan tot 400 nakomelingen voortbrengen. Ze zijn 's nachts actief: zie je er overdag één, dan zijn er waarschijnlijk veel meer. Hoe eerder je ingrijpt, hoe kleiner de behandeling.",
+    gevaren=["Verspreiding van salmonella, E. coli en andere bacteriën", "Allergie en astma door uitwerpselen", "Vervuiling van voedsel en keukengerei", "Snelle vermenigvuldiging in warme, vochtige ruimtes"],
+    aanpak="We brengen een professionele gel aan op de schuilplekken en zetten waar nodig een spuitbehandeling in. Met monitoring houden we bij of de plaag verdwijnt, en we komen terug voor een controlebezoek.",
+    ticks=["Bestrijding in alle levensstadia", "Professionele gelmethode", "Discreet, ook voor bedrijven", "Controlebezoek en garantie"],
+    signs=["Insecten die wegschieten als het licht aangaat", "Muffe geur in keuken of kast", "Kleine donkere keutels en eikapsels"],
+    big=("400", "nakomelingen uit één kakkerlak"),
+    faq=[
+      ("Hoe herken ik kakkerlakken?", "Kakkerlakken zijn platte, ovale insecten van 1 à 4 cm, bruin tot donkerbruin. Je herkent een plaag aan een muffe geur, kleine donkere keutels, eikapsels en levende kakkerlakken, vooral 's nachts."),
+      ("Zijn kakkerlakken gevaarlijk voor mijn gezondheid?", "Ja. Ze verspreiden bacteriën zoals salmonella en E. coli. Hun uitwerpselen en huidresten kunnen allergie en astma veroorzaken, vooral bij kinderen."),
+      ("Kan ik kakkerlakken zelf bestrijden?", "Kakkerlakken zijn erg hardnekkig. Voor volledige bestrijding zijn professionele middelen en technieken nodig."),
+      ("Hoe lang duurt het voordat ze weg zijn?", "Binnen een paar dagen zie je een sterke afname. Volledige bestrijding duurt gemiddeld 2 à 4 weken."),
+    ]),
+  dict(slug="zilvervisjes", name="Zilvervisjes", lat="Lepisma saccharinum", spoed=False, urg="Geen haast",
+    title="Zilvervisjesbestrijding",
+    kort="Wijzen op vocht. We pakken de plaag aan en geven advies over ventilatie.",
+    lead="Zilvervisjes zijn niet schadelijk voor je gezondheid, maar ze wijzen op vocht en tasten papier, behang en textiel aan. We pakken de plaag én de oorzaak aan.",
+    intro="Zilvervisjes zijn kleine, zilverkleurige insecten die van vocht en zetmeel houden. Je vindt ze vooral in badkamers, keukens en kelders. Ze verspreiden geen ziektes, maar kunnen wel boeken, behang, foto's en kleding beschadigen.",
+    snel="Zilvervisjes kunnen jaren oud worden en planten zich hun hele leven voort. In een vochtige omgeving groeit een kleine plaag snel uit tot een groot probleem.",
+    gevaren=["Schade aan boeken, documenten en foto's", "Aantasting van behang en lijm", "Schade aan kleding en textiel", "Een teken van vochtproblemen in huis"],
+    aanpak="We bestrijden zilvervisjes met gerichte middelen op de plekken waar ze zich verstoppen. Daarnaast kijken we naar de oorzaak: vocht. Met advies over ventilatie en vochtbestrijding houd je ze blijvend weg.",
+    ticks=["Gerichte professionele bestrijding", "Advies over ventilatie en vocht", "Veilige methoden", "Blijvend resultaat"],
+    signs=["Zilverkleurige insectjes van ongeveer 1 cm", "Vooral 's nachts in badkamer of kelder", "Vraatplekjes in papier en behang"],
+    big=("8 jaar", "kan een zilvervisje oud worden"),
+    faq=[
+      ("Zijn zilvervisjes schadelijk?", "Ze verspreiden geen ziektes, maar kunnen wel papier, boeken, behang, foto's en kleding beschadigen. Een grote plaag is bovendien vervelend."),
+      ("Waarom heb ik zilvervisjes?", "Zilvervisjes houden van een warme, vochtige omgeving, zoals badkamers, keukens en kelders. Vocht in huis is meestal de belangrijkste oorzaak."),
+      ("Kan ik zilvervisjes zelf bestrijden?", "Bij een kleine plaag kun je het vochtprobleem aanpakken en lokdozen plaatsen. Bij een grotere plaag werkt een professionele behandeling beter."),
+      ("Hoe lang duurt de behandeling?", "Ongeveer 1 à 2 uur. Het volledige resultaat zie je binnen 2 à 3 weken."),
+    ]),
+]
+
+PROVINCES = [
+    dict(slug="noord-holland", name="Noord-Holland", cities=["Amsterdam", "Haarlem", "Alkmaar", "Zaandam"]),
+    dict(slug="zuid-holland", name="Zuid-Holland", cities=["Rotterdam", "Den Haag", "Leiden", "Dordrecht"]),
+    dict(slug="utrecht", name="Utrecht", cities=["Utrecht", "Amersfoort", "Veenendaal", "Zeist", "Nieuwegein"]),
+    dict(slug="noord-brabant", name="Noord-Brabant", cities=["Eindhoven", "Tilburg", "Breda", "'s-Hertogenbosch"]),
+    dict(slug="gelderland", name="Gelderland", cities=["Arnhem", "Nijmegen", "Apeldoorn", "Ede"]),
+    dict(slug="flevoland", name="Flevoland", cities=["Almere", "Lelystad", "Dronten"]),
+    dict(slug="overijssel", name="Overijssel", cities=["Enschede", "Zwolle", "Deventer", "Almelo"]),
+]
