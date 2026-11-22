@@ -455,3 +455,83 @@ footer .bottom{border-top:1px solid var(--line);display:flex;flex-wrap:wrap;just
 @media (max-width:800px){.steps.three{grid-template-columns:1fr}}
 @media (min-width:1001px){.steps.three li:not(:last-child)::before{display:none}}
 @media (max-width:520px){.phero .actions .btn,.hero .actions .btn{flex:1 1 100%}}
+
+/* ---------- formulieren (uitgebreid) ---------- */
+.xform{gap:22px;padding:30px;border-radius:24px;background:radial-gradient(70% 50% at 100% 0%,color-mix(in srgb,var(--cobalt) 14%,transparent),transparent 70%),linear-gradient(170deg,var(--panel),color-mix(in srgb,var(--panel) 75%,var(--ink)))}
+.xform.big{padding:36px;gap:28px}
+.xform-head{display:flex;gap:16px;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.xform-head h2{font-size:clamp(1.5rem,3vw,2rem)}
+.xform-head h3{font-size:1.35rem}
+.xform-head p{color:var(--muted);font-size:.92rem;margin-top:4px}
+.fs{border:0;margin:0;padding:0;display:grid;gap:18px;min-width:0}
+.fs+.fs{padding-top:26px;border-top:1px dashed var(--line)}
+.fs>legend{display:flex;align-items:center;gap:12px;padding:0;margin-bottom:16px;font:700 1.2rem var(--f-display);letter-spacing:-.01em;color:var(--text)}
+.num{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:600 .85rem var(--f-mono);background:var(--cobalt);color:#fff;box-shadow:0 0 0 4px color-mix(in srgb,var(--cobalt) 22%,transparent)}
+.field{display:grid;gap:7px;min-width:0;position:relative}
+.lbl{display:flex;align-items:baseline;gap:6px;font-size:.86rem;font-weight:500;color:var(--ice)}
+.lbl small{font-weight:400;color:var(--muted);font-size:.78rem}
+.counter{margin-left:auto;font:400 .72rem var(--f-mono);color:var(--muted)}
+.xform input:not([type=radio]):not([type=checkbox]),.xform select,.xform textarea{background:color-mix(in srgb,var(--ink) 88%,transparent);border-color:color-mix(in srgb,var(--line) 85%,transparent);padding:13px 14px}
+.xform input:hover,.xform select:hover,.xform textarea:hover{border-color:color-mix(in srgb,var(--cobalt) 45%,var(--line))}
+.xform select{appearance:none;-webkit-appearance:none;padding-right:40px;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(-45deg,transparent 50%,var(--muted) 50%);background-position:calc(100% - 20px) 52%,calc(100% - 15px) 52%;background-size:5px 5px;background-repeat:no-repeat}
+.xform select option{background:var(--panel);color:var(--text)}
+.xform textarea{min-height:120px}
+input[aria-invalid=true],select[aria-invalid=true],textarea[aria-invalid=true]{border-color:#ff6b6b!important;box-shadow:0 0 0 3px rgba(255,107,107,.18)!important}
+.field-err{display:flex;align-items:center;gap:6px;color:#ff9a9a;font-size:.8rem;font-weight:500}
+.field-err::before{content:"!";display:grid;place-items:center;width:15px;height:15px;border-radius:50%;background:#ff6b6b;color:var(--ink);font:700 .65rem var(--f-mono);flex:none}
+
+/* keuzetegels */
+.choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.choice{position:relative;cursor:pointer}
+.choice input,.seg input,.consent input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.choice-box{display:grid;justify-items:center;gap:8px;padding:16px 8px 14px;border-radius:16px;border:1px solid var(--line);background:color-mix(in srgb,var(--ink) 80%,transparent);text-align:center;transition:border-color .15s,background .15s,transform .15s;position:relative;height:100%}
+.choice-box b{font-weight:600;font-size:.88rem;line-height:1.2}
+.choice:hover .choice-box{border-color:color-mix(in srgb,var(--cobalt) 55%,var(--line));transform:translateY(-1px)}
+.choice input:checked+.choice-box{border-color:var(--cobalt);background:color-mix(in srgb,var(--cobalt) 16%,var(--panel));box-shadow:0 10px 24px -14px var(--cobalt)}
+.choice input:checked+.choice-box::after{content:"";position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--cobalt) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center/11px no-repeat}
+.choice input:focus-visible+.choice-box,.seg input:focus-visible+span,.consent input:focus-visible+.box{outline:2px solid var(--signal);outline-offset:2px}
+@media (max-width:420px){.choice-grid{gap:8px}.choice-box{padding:12px 4px}.choice-box b{font-size:.8rem}.choice-box .ico{--s:32px}}
+
+/* schakelknoppen en aanvinklabels */
+.group{border:0;margin:0;padding:0;display:grid;gap:9px;min-width:0}
+.group>legend{padding:0;margin-bottom:9px}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg label{cursor:pointer;position:relative}
+.seg span{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border-radius:999px;border:1px solid var(--line);background:color-mix(in srgb,var(--ink) 80%,transparent);font-size:.9rem;color:var(--text);transition:border-color .15s,background .15s}
+.seg span .i{color:var(--muted);width:16px;height:16px}
+.seg label:hover span{border-color:color-mix(in srgb,var(--cobalt) 55%,var(--line))}
+.seg input:checked+span{border-color:var(--cobalt);background:color-mix(in srgb,var(--cobalt) 20%,var(--panel))}
+.seg input:checked+span .i{color:var(--ice)}
+.seg input[value^="Spoed"]:checked+span{border-color:var(--signal);background:color-mix(in srgb,var(--signal) 16%,var(--panel))}
+.seg input[value^="Spoed"]:checked+span .i{color:var(--signal)}
+.seg.chk span .i{width:0;opacity:0;margin-right:-8px;transition:width .15s,opacity .15s,margin .15s;color:var(--ice)}
+.seg.chk input:checked+span .i{width:15px;opacity:1;margin-right:0}
+
+/* akkoord */
+.consent{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:start;cursor:pointer;font-size:.88rem;color:var(--muted);line-height:1.5}
+.consent .box{width:22px;height:22px;border-radius:7px;border:1px solid var(--line);background:var(--ink);display:grid;place-items:center;transition:background .15s,border-color .15s;margin-top:1px}
+.consent .box .i{width:14px;height:14px;color:#fff;opacity:0;stroke-width:3}
+.consent input:checked+.box{background:var(--cobalt);border-color:var(--cobalt)}
+.consent input:checked+.box .i{opacity:1}
+.consent input[aria-invalid=true]+.box{border-color:#ff6b6b;box-shadow:0 0 0 3px rgba(255,107,107,.18)}
+.consent .field-err{grid-column:2}
+
+/* verzenden */
+.btn-lg{padding:16px 26px;font-size:1.02rem;width:100%}
+.btn.loading{opacity:.85;cursor:progress;transform:none}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;animation:spin .7s linear infinite;flex:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.form-foot{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:.8rem;color:var(--muted)}
+.form-foot span{display:inline-flex;align-items:center;gap:7px}
+.form-foot .i{color:var(--cobalt-2);width:15px;height:15px}
+.form-foot a{color:var(--text);font-weight:600;text-decoration:none}
+.sent{display:flex;gap:10px;align-items:flex-start}
+.sent.bad{color:#ffd0d0;background:rgba(255,107,107,.1);border-color:rgba(255,107,107,.55)}
+
+/* contactpagina-indeling */
+.form-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px;align-items:start}
+.form-aside{display:grid;gap:16px;position:sticky;top:96px}
+.form-aside .btn{justify-self:start}
+@media (max-width:980px){.form-layout{grid-template-columns:1fr}.form-aside{position:static}}
+@media (max-width:560px){.xform,.xform.big{padding:20px;border-radius:20px}.xform-head{align-items:flex-start}}
+.fs>legend,.group>legend{float:left;width:100%;margin-bottom:0}

@@ -139,21 +139,18 @@ def sheet(root):
     </ul>
     <div class="bignum"><strong id="spoed-nr">{E(TEL)}</strong><button class="copy" type="button" id="spoed-copy">Kopieer nummer</button></div>
     <a class="btn btn-spoed" href="{TEL_HREF}" style="font-size:1.05rem;padding:15px">{ic("phone-call")}Bel nu met spoed</a>
-    <form data-form="Spoed" data-subject="SPOED terugbelverzoek" novalidate>
+    <form data-form="Spoed" data-subject="Terugbelverzoek" novalidate>
       <p class="small">Of laat je nummer achter, dan bellen we je zo snel mogelijk terug. <a href="{u(root, "spoed")}">Meer over spoedhulp</a></p>
-      <div class="row">
-        <label for="s-naam"><span>Naam</span><input id="s-naam" name="naam" autocomplete="name"></label>
-        <label for="s-tel"><span>Telefoonnummer <span class="req">*</span></span><input id="s-tel" name="telefoon" type="tel" autocomplete="tel" required></label>
-      </div>
+      {honeypot()}
+      <div class="row">{field("s-naam", "naam", "Naam", ac="name")}{field("s-tel", "telefoon", "Telefoonnummer", "tel", True, "tel", "06 12345678")}</div>
       <button class="btn btn-ghost" type="submit">{ic("phone-incoming")}Bel mij terug</button>
-      <div class="sent" hidden></div>
+      <div class="sent" role="status" hidden></div>
     </form>
   </div>
 </div>'''
 
 
 def footer(root):
-    kvk = E(KVK) if KVK else '<span class="ph">[nummer]</span>'
     pests = "".join(f'<li><a href="{pu(root, p["slug"])}">{E(p["name"])}</a></li>' for p in PESTS)
     return f'''<footer>
   <div class="wrap cols">
@@ -183,7 +180,7 @@ def footer(root):
   </div>
   <div class="wrap bottom">
     <span>© 2026 Blauweschild Ongediertebestrijding</span>
-    <span>KvK {kvk}</span>
+    <span>Gecertificeerd · Discreet · Garantie op resultaat</span>
   </div>
 </footer>'''
 
@@ -331,28 +328,97 @@ def audience():
     return f'<div class="aud">{"".join(out)}</div>'
 
 
-def contact_form(fid, subject, redirect=True, email=False, title=None):
-    soorten = "".join(f"<option>{E(p['name'])}</option>" for p in PESTS) + "<option>Anders of weet ik niet</option>"
-    mail = f'<label for="{fid}-mail"><span>E-mail</span><input id="{fid}-mail" name="email" type="email" autocomplete="email"></label>' if email else ""
-    t = f'<h2>{title}</h2><p class="small" style="font-size:.92rem">Laat je gegevens achter, dan bellen we je terug om een afspraak te plannen.</p>' if title else ""
-    return f'''<form data-form="Inspectie" data-subject="{E(subject)}"{' data-redirect' if redirect else ''} novalidate>
-        {t}
-        <div class="hp" aria-hidden="true"><label>Laat leeg<input name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
-        <div class="row">
-          <label for="{fid}-naam"><span>Naam <span class="req">*</span></span><input id="{fid}-naam" name="naam" autocomplete="name" required></label>
-          <label for="{fid}-tel"><span>Telefoonnummer <span class="req">*</span></span><input id="{fid}-tel" name="telefoon" type="tel" autocomplete="tel" required></label>
-        </div>
-        <div class="row">
-          <label for="{fid}-pc"><span>Postcode of plaats</span><input id="{fid}-pc" name="plaats" autocomplete="postal-code" placeholder="1234 AB"></label>
-          <label for="{fid}-soort"><span>Wat speelt er?</span>
-            <select id="{fid}-soort" name="plaagdier">{soorten}</select>
-          </label>
-        </div>
-        {mail}
-        <label for="{fid}-msg"><span>Toelichting</span><textarea id="{fid}-msg" name="toelichting" placeholder="Waar zie je het, sinds wanneer, hoeveel?"></textarea></label>
-        <button class="btn btn-primary" type="submit">{ic("send")}Verstuur aanvraag</button>
-        <p class="small">Door te versturen ga je akkoord met het verwerken van je gegevens om contact met je op te nemen over je aanvraag.</p>
-        <div class="sent" hidden></div>
+def field(fid, name, label, typ="text", req=False, ac="", ph="", cls=""):
+    star = ' <span class="req">*</span>' if req else ""
+    attrs = (" required" if req else "") + (f' autocomplete="{ac}"' if ac else "") + (f' placeholder="{E(ph)}"' if ph else "")
+    if typ == "tel":
+        attrs += ' inputmode="tel"'
+    return f'<label class="field {cls}" for="{fid}"><span class="lbl">{E(label)}{star}</span><input id="{fid}" name="{name}" type="{typ}"{attrs}></label>'
+
+
+def select(fid, name, label, options, cls=""):
+    opts = "".join(f"<option>{E(o)}</option>" for o in options)
+    return f'<label class="field {cls}" for="{fid}"><span class="lbl">{E(label)}</span><select id="{fid}" name="{name}">{opts}</select></label>'
+
+
+def textarea(fid, name, label, ph, req=False, maxlen=1000):
+    star = ' <span class="req">*</span>' if req else ""
+    return f'<label class="field" for="{fid}"><span class="lbl">{E(label)}{star}<span class="counter" aria-hidden="true"></span></span><textarea id="{fid}" name="{name}" maxlength="{maxlen}"{" required" if req else ""} placeholder="{E(ph)}"></textarea></label>'
+
+
+def seg(name, legend, options, default=None):
+    out = []
+    for opt in options:
+        val, icn = (opt if isinstance(opt, tuple) else (opt, None))
+        chk = " checked" if val == default else ""
+        out.append(f'<label><input type="radio" name="{name}" value="{E(val)}"{chk}><span>{ic(icn) if icn else ""}{E(val)}</span></label>')
+    return f'<fieldset class="group"><legend class="lbl">{E(legend)}</legend><div class="seg">{"".join(out)}</div></fieldset>'
+
+
+def chipsel(name, legend, options):
+    out = "".join(f'<label><input type="checkbox" name="{name}" value="{E(o)}"><span>{ic("check")}{E(o)}</span></label>' for o in options)
+    return f'<fieldset class="group"><legend class="lbl">{E(legend)} <small>meerdere mogelijk</small></legend><div class="seg chk">{out}</div></fieldset>'
+
+
+def consent(fid, text="Ik ga akkoord dat Blauweschild mijn gegevens gebruikt om contact met me op te nemen over deze aanvraag."):
+    return f'<label class="field consent" for="{fid}"><input type="checkbox" id="{fid}" name="akkoord" value="Ja" required><span class="box">{ic("check")}</span><span>{E(text)} <span class="req">*</span></span></label>'
+
+
+def honeypot():
+    return '<div class="hp" aria-hidden="true"><label>Laat leeg<input name="_gotcha" tabindex="-1" autocomplete="off"></label></div>'
+
+
+def form_foot(extra=""):
+    return f'<div class="form-foot"><span>{ic("lock")}Je gegevens gebruiken we alleen voor je aanvraag</span><span>{ic("timer")}Reactie binnen één werkdag</span>{extra}</div>'
+
+
+def contact_form(fid, subject, redirect=True):
+    """Compacte versie, voor de homepage."""
+    soorten = [p["name"] for p in PESTS] + ["Anders of weet ik niet"]
+    return f'''<form class="xform" data-form="Inspectie" data-subject="{E(subject)}"{' data-redirect' if redirect else ''} novalidate>
+        <div class="xform-head">{tile("calendar-check")}<div><h3>Inspectie aanvragen</h3><p>We bellen je terug om een afspraak te plannen.</p></div></div>
+        {honeypot()}
+        <div class="row">{field(fid + "-naam", "naam", "Naam", req=True, ac="name")}{field(fid + "-tel", "telefoon", "Telefoonnummer", "tel", True, "tel", "06 12345678")}</div>
+        <div class="row">{field(fid + "-pc", "postcode", "Postcode", ac="postal-code", ph="1234 AB")}{select(fid + "-soort", "plaagdier", "Wat speelt er?", soorten)}</div>
+        {textarea(fid + "-msg", "toelichting", "Toelichting", "Waar zie je het, sinds wanneer, hoeveel?", maxlen=600)}
+        {consent(fid + "-ok")}
+        <button class="btn btn-primary btn-lg" type="submit">{ic("send")}Verstuur aanvraag</button>
+        {form_foot()}
+        <div class="sent" role="status" hidden></div>
+      </form>'''
+
+
+def detailed_form(fid):
+    """Uitgebreide versie, voor de contactpagina."""
+    choices = "".join(f'<label class="choice"><input type="radio" name="plaagdier" value="{E(p["name"])}"><span class="choice-box">{tile(p["icon"], "sm")}<b>{E(p["name"])}</b></span></label>' for p in PESTS)
+    choices += f'<label class="choice"><input type="radio" name="plaagdier" value="Weet ik niet"><span class="choice-box">{tile("circle-help", "sm")}<b>Weet ik niet</b></span></label>'
+    return f'''<form class="xform big" data-form="Inspectie" data-subject="Inspectie-aanvraag" data-redirect novalidate>
+        <div class="xform-head">{tile("calendar-check", "lg")}<div><h2>Inspectie aanvragen</h2><p>Duurt ongeveer twee minuten. Velden met <span class="req">*</span> zijn verplicht, de rest helpt ons om je sneller en beter te helpen.</p></div></div>
+        {honeypot()}
+        <fieldset class="fs">
+          <legend><span class="num">1</span>Wat speelt er?</legend>
+          <div class="choice-grid" role="radiogroup" aria-label="Plaagdier">{choices}</div>
+          <div class="row">{select(fid + "-sinds", "sinds_wanneer", "Sinds wanneer merk je het?", ["Vandaag", "Een paar dagen", "Een paar weken", "Langer dan een maand", "Weet ik niet"])}{select(fid + "-vaak", "hoe_vaak", "Hoe vaak zie of hoor je het?", ["Eén keer", "Af en toe", "Dagelijks", "Weet ik niet"])}</div>
+          {seg("urgentie", "Hoe dringend is het?", [("Spoed, zo snel mogelijk", "siren"), ("Deze week", "calendar-days"), ("Geen haast", "clock")], "Deze week")}
+        </fieldset>
+        <fieldset class="fs">
+          <legend><span class="num">2</span>Waar is het?</legend>
+          {seg("type_pand", "Soort pand", [("Woning", "house"), ("Bedrijf", "building-2"), ("VvE of verhuur", "users")], "Woning")}
+          {chipsel("plek", "Waar zie je het?", ["Keuken", "Woonkamer", "Slaapkamer", "Badkamer", "Zolder", "Kruipruimte of kelder", "Tuin of schuur", "Dak of gevel"])}
+          <div class="row">{field(fid + "-pc", "postcode", "Postcode", ac="postal-code", ph="1234 AB")}{field(fid + "-plaats", "plaats", "Plaats", ac="address-level2", ph="Bijv. Utrecht")}</div>
+          {field(fid + "-bedrijf", "bedrijfsnaam", "Bedrijfsnaam (alleen bij zakelijk)", ac="organization")}
+        </fieldset>
+        <fieldset class="fs">
+          <legend><span class="num">3</span>Je gegevens</legend>
+          <div class="row">{field(fid + "-naam", "naam", "Naam", req=True, ac="name")}{field(fid + "-tel", "telefoon", "Telefoonnummer", "tel", True, "tel", "06 12345678")}</div>
+          {field(fid + "-mail", "email", "E-mail", "email", ac="email", ph="naam@voorbeeld.nl")}
+          {seg("beste_moment", "Wanneer kunnen we je het best bellen?", [("Ochtend", "sun"), ("Middag", "clock"), ("Maakt niet uit", "check")], "Maakt niet uit")}
+          {textarea(fid + "-msg", "toelichting", "Toelichting", "Beschrijf kort wat je ziet of hoort. Bijvoorbeeld: keutels in het keukenkastje, geritsel op zolder 's nachts.")}
+          {consent(fid + "-ok")}
+        </fieldset>
+        <button class="btn btn-primary btn-lg" type="submit">{ic("send")}Verstuur aanvraag</button>
+        {form_foot(f'<span>{ic("phone")}Spoed? Bel <a href="{TEL_HREF}">{E(TEL)}</a></span>')}
+        <div class="sent" role="status" hidden></div>
       </form>'''
 
 
@@ -790,20 +856,18 @@ def vac_main(root):
       <div class="contact-side">{head("Solliciteer direct", "Kom ons team versterken", "Vul het formulier in. We nemen binnen een paar werkdagen contact met je op.")}
         <div class="card">{tile("circle-help")}<h3>Vragen over werken bij ons?</h3><p>Bel ons op <a href="{TEL_HREF}">{E(TEL)}</a> of mail naar <a href="mailto:{MAIL}">{E(MAIL)}</a>. We vertellen je graag meer over de functies en het team.</p></div>
       </div>
-      <form data-form="Sollicitatie" data-subject="Sollicitatie" data-redirect novalidate>
-        <div class="hp" aria-hidden="true"><label>Laat leeg<input name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
-        <div class="row">
-          <label for="v-naam"><span>Naam <span class="req">*</span></span><input id="v-naam" name="naam" autocomplete="name" required></label>
-          <label for="v-mail"><span>E-mail <span class="req">*</span></span><input id="v-mail" name="email" type="email" autocomplete="email" required></label>
-        </div>
-        <div class="row">
-          <label for="v-tel"><span>Telefoonnummer</span><input id="v-tel" name="telefoon" type="tel" autocomplete="tel"></label>
-          <label for="v-func"><span>Functie</span><select id="v-func" name="functie">{funcs}</select></label>
-        </div>
-        <label for="v-mot"><span>Motivatie <span class="req">*</span></span><textarea id="v-mot" name="motivatie" required placeholder="Vertel kort wie je bent en waarom je bij ons wilt werken."></textarea></label>
-        <button class="btn btn-primary" type="submit">{ic("send")}Verstuur sollicitatie</button>
-        <p class="small">Door te versturen ga je akkoord met het verwerken van je gegevens voor deze sollicitatie.</p>
-        <div class="sent" hidden></div>
+      <form class="xform" data-form="Sollicitatie" data-subject="Sollicitatie" data-redirect novalidate>
+        <div class="xform-head">{tile("send")}<div><h3>Sollicitatieformulier</h3><p>Velden met <span class="req">*</span> zijn verplicht.</p></div></div>
+        {honeypot()}
+        <div class="row">{field("v-naam", "naam", "Naam", req=True, ac="name")}{field("v-mail", "email", "E-mail", "email", True, "email", "naam@voorbeeld.nl")}</div>
+        <div class="row">{field("v-tel", "telefoon", "Telefoonnummer", "tel", ac="tel", ph="06 12345678")}{field("v-plaats", "woonplaats", "Woonplaats", ac="address-level2")}</div>
+        {seg("functie", "Voor welke functie?", [("Ongediertebestrijder", "bug-off"), ("Monteur", "wrench"), ("Klantenservice", "headset"), ("Open sollicitatie", "send")], "Ongediertebestrijder")}
+        {seg("ervaring", "Ervaring in het vak?", ["Ja", "Een beetje", "Nee, maar ik wil het leren"], "Nee, maar ik wil het leren")}
+        {textarea("v-mot", "motivatie", "Motivatie", "Vertel kort wie je bent en waarom je bij ons wilt werken.", req=True)}
+        {consent("v-ok", "Ik ga akkoord dat Blauweschild mijn gegevens gebruikt voor deze sollicitatie.")}
+        <button class="btn btn-primary btn-lg" type="submit">{ic("send")}Verstuur sollicitatie</button>
+        {form_foot()}
+        <div class="sent" role="status" hidden></div>
       </form>
     </div>''', "alt", "solliciteer")
 
@@ -822,7 +886,6 @@ CONTACT_FAQ = [
 
 
 def contact_main(root):
-    kvk = E(KVK) if KVK else '<span class="ph">[nummer]</span>'
     methods = f'''<div class="cards">
       <a class="card" href="{TEL_HREF}">{tile("phone")}<h3>Bel ons</h3><p>De snelste manier om geholpen te worden. 7 dagen per week, 08:00–17:00.</p><span class="link" style="font-size:1.05rem;color:var(--text)">{E(TEL)} {ic("arrow-right")}</span></a>
       <a class="card" href="mailto:{MAIL}">{tile("mail")}<h3>Mail ons</h3><p>Stuur je vraag of een foto. We reageren binnen één werkdag.</p><span class="link" style="overflow-wrap:anywhere">{E(MAIL)}</span></a>
@@ -832,10 +895,12 @@ def contact_main(root):
         "Bel ons, mail ons of vul het formulier in. We helpen je direct verder en plannen een inspectie op een moment dat jou uitkomt.",
         buttons=f'<div class="actions"><a class="btn btn-spoed" href="{TEL_HREF}">{ic("phone")}Bel {E(TEL)}</a><a class="btn btn-primary" href="#formulier">{ic("send")}Naar het formulier</a></div>') + \
         trustbar() + section(methods, "tight") + \
-        section(f'''<div class="split">
-      <div class="contact-side">
-        {head("Inspectie aanvragen", "Vertel ons wat er speelt", "Hoe meer we vooraf weten, hoe beter we je kunnen helpen. Dit is handig om te vermelden:")}
-        {checklist(MENTION)}
+        section(f'''<div class="form-layout">
+      <div id="formulier">{detailed_form("c")}</div>
+      <aside class="form-aside">
+        <div class="card warn">{tile("phone-call", "sig")}<h3>Liever direct contact?</h3><p>Bel ons, dan plannen we meteen een afspraak. Bij spoed is bellen altijd het snelst.</p><a class="btn btn-spoed" href="{TEL_HREF}">{ic("phone")}Bel {E(TEL)}</a><a class="link" href="mailto:{MAIL}" style="overflow-wrap:anywhere">{ic("mail")}{E(MAIL)}</a></div>
+        <div class="card">{tile("list-checks")}<h3>Handig om te vermelden</h3>{checklist(MENTION)}</div>
+        <div class="card">{tile("lock")}<h3>Veilig en vertrouwelijk</h3><p>We gebruiken je gegevens alleen om contact met je op te nemen over je aanvraag. We delen ze niet met anderen.</p></div>
         <div class="card">
           <h3>Bedrijfsgegevens</h3>
           <dl class="dl">
@@ -844,11 +909,9 @@ def contact_main(root):
             <dt>E-mail</dt><dd><a href="mailto:{MAIL}">{E(MAIL)}</a></dd>
             <dt>Open</dt><dd>7 dagen per week, 08:00–17:00</dd>
             <dt>Werkgebied</dt><dd><a href="{u(root, "locaties")}">Heel Nederland</a></dd>
-            <dt>KvK</dt><dd>{kvk}</dd>
           </dl>
         </div>
-      </div>
-      <div id="formulier">{contact_form("c", "Vraag via website", email=True, title="Inspectie aanvragen")}</div>
+      </aside>
     </div>''', "alt") + \
         section(head("Na je aanvraag", "Wat gebeurt er nu?", "Zo ziet het traject eruit, van je aanvraag tot de start van de behandeling.") + steps(AFTER)) + \
         section(head("Veelgestelde vragen", "Over contact en afspraken") + faq(CONTACT_FAQ, cols=True), "alt")
@@ -864,7 +927,7 @@ def bedankt_main(root):
             "Houd kinderen en huisdieren uit de buurt van een wespennest", "Neem bij bedwantsen geen spullen mee naar andere kamers", "Houd deuren naar kelder, kruipruimte en zolder dicht"]
     return phero(root, [("Bedankt", None)], "Verstuurd", "Bedankt voor je <em>bericht</em>",
         "We hebben je aanvraag goed ontvangen en nemen zo snel mogelijk contact met je op. Hieronder lees je wat er nu gebeurt en wat je in de tussentijd alvast kunt doen.",
-        buttons=f'<div class="actions"><a class="btn btn-primary" href="{u(root)}">{ic("house")}Terug naar de homepage</a><a class="btn btn-ghost" href="{u(root, "diensten")}">Bekijk onze diensten</a></div>') + \
+        buttons=f'<div class="actions"><a class="btn btn-primary" href="{u(root)}">{ic("house")}Terug naar de homepage</a><a class="btn btn-ghost" href="{u(root, "diensten")}">Bekijk onze diensten</a></div>').replace("<h1>", "<h1 data-thanks>", 1).replace('<p class="lead">', '<p class="lead" data-thanks-lead>', 1) + \
         section(head("Wat gebeurt er nu?", "De volgende stappen") + steps(nxt, "steps three")) + \
         section(head("In de tussentijd", "Dit kun je alvast doen", "Met deze stappen beperk je de overlast en maak je de bestrijding makkelijker.") + checklist(tips, "tips"), "alt") + \
         section(head("Lees alvast verder", "Meer over je plaagdier", "Op de pagina van elk plaagdier lees je hoe je het herkent, wat de risico's zijn en hoe we het aanpakken.") + pest_tiles(root)) + \

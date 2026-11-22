@@ -88,14 +88,12 @@
     </ul>
     <div class="bignum"><strong id="spoed-nr">085 060 5985</strong><button class="copy" type="button" id="spoed-copy">Kopieer nummer</button></div>
     <a class="btn btn-spoed" href="tel:+31850605985" style="font-size:1.05rem;padding:15px"><svg class="i" aria-hidden="true"><use href="#i-phone-call"/></svg>Bel nu met spoed</a>
-    <form data-form="Spoed" data-subject="SPOED terugbelverzoek" novalidate>
+    <form data-form="Spoed" data-subject="Terugbelverzoek" novalidate>
       <p class="small">Of laat je nummer achter, dan bellen we je zo snel mogelijk terug. <a href="../../spoed/index.html">Meer over spoedhulp</a></p>
-      <div class="row">
-        <label for="s-naam"><span>Naam</span><input id="s-naam" name="naam" autocomplete="name"></label>
-        <label for="s-tel"><span>Telefoonnummer <span class="req">*</span></span><input id="s-tel" name="telefoon" type="tel" autocomplete="tel" required></label>
-      </div>
+      <div class="hp" aria-hidden="true"><label>Laat leeg<input name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
+      <div class="row"><label class="field " for="s-naam"><span class="lbl">Naam</span><input id="s-naam" name="naam" type="text" autocomplete="name"></label><label class="field " for="s-tel"><span class="lbl">Telefoonnummer <span class="req">*</span></span><input id="s-tel" name="telefoon" type="tel" required autocomplete="tel" placeholder="06 12345678" inputmode="tel"></label></div>
       <button class="btn btn-ghost" type="submit"><svg class="i" aria-hidden="true"><use href="#i-phone-incoming"/></svg>Bel mij terug</button>
-      <div class="sent" hidden></div>
+      <div class="sent" role="status" hidden></div>
     </form>
   </div>
 </div>
@@ -127,7 +125,7 @@
   </div>
   <div class="wrap bottom">
     <span>© 2026 Blauweschild Ongediertebestrijding</span>
-    <span>KvK <span class="ph">[nummer]</span></span>
+    <span>Gecertificeerd · Discreet · Garantie op resultaat</span>
   </div>
 </footer>
 <script src="../../js/site.js"></script>

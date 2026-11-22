@@ -5,7 +5,6 @@
 TEL = "085 060 5985"
 TEL_HREF = "tel:+31850605985"
 MAIL = "blauweschildongedierte@gmail.com"
-KVK = None  # vul hier je KvK-nummer in als tekst, bijvoorbeeld "12345678"
 
 # Korte balk met zekerheden onder de paginakop
 TRUST = [

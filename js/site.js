@@ -4,9 +4,10 @@
   const TEL="085 060 5985",MAIL="blauweschildongedierte@gmail.com";
 
   /* ===== FORMSPREE =====
-     Plak hieronder de code van je Formspree-formulier (het stukje na /f/ in je endpoint),
-     bijvoorbeeld "xyzabcde". Zolang dit leeg is, verstuurt de site niets. */
-  const FORMSPREE_ID="";
+     Alle formulieren versturen via dit endpoint (https://formspree.io/f/xbgoplzz).
+     Het versturen gebeurt op de achtergrond; de bezoeker blijft op deze site
+     en komt na verzending op de eigen bedankpagina. */
+  const FORMSPREE_ID="xbgoplzz";
 
   /* ---------- menu: uitklappers ---------- */
   const dds=[...document.querySelectorAll(".menu [aria-expanded]")];
@@ -50,38 +51,96 @@
   }
 
   /* ---------- formulieren ---------- */
-  async function verstuur(data,btn){
-    if(!FORMSPREE_ID)return {ok:false,demo:true};
-    const oud=btn.textContent;btn.disabled=true;btn.textContent="Bezig met versturen…";
-    try{
-      const r=await fetch("https://formspree.io/f/"+FORMSPREE_ID,{method:"POST",headers:{"Accept":"application/json","Content-Type":"application/json"},body:JSON.stringify(data)});
-      return {ok:r.ok};
-    }catch(err){return {ok:false};}
-    finally{btn.disabled=false;btn.textContent=oud;}
+  const ENDPOINT="https://formspree.io/f/"+FORMSPREE_ID;
+  const holderOf=f=>f.closest(".field")||f.closest("label")||f.parentElement;
+  const nameOf=f=>{const h=holderOf(f),l=h&&h.querySelector(".lbl");return (l?l.textContent:(f.name||"dit veld")).replace("*","").trim().toLowerCase();};
+  function setErr(f,msg){
+    f.setAttribute("aria-invalid","true");
+    const h=holderOf(f);let e=h.querySelector(".field-err");
+    if(!e){e=document.createElement("small");e.className="field-err";e.id=(f.id||f.name)+"-err";h.appendChild(e);f.setAttribute("aria-describedby",e.id);}
+    e.textContent=msg;
   }
-  const mislukt="Versturen lukte niet. Bel ons direct op "+TEL+" of mail naar "+MAIL+".";
+  function clearErr(f){
+    f.removeAttribute("aria-invalid");
+    const h=holderOf(f),e=h&&h.querySelector(".field-err");
+    if(e){e.remove();f.removeAttribute("aria-describedby");}
+  }
+  function validate(form){
+    const bad=[];
+    form.querySelectorAll("input,select,textarea").forEach(f=>{
+      if(f.closest(".hp")||f.type==="radio"||(f.type==="checkbox"&&!f.required))return;
+      clearErr(f);
+      const v=f.type==="checkbox"?f.checked:f.value.trim();
+      if(f.required&&!v){setErr(f,f.type==="checkbox"?"Vink dit aan om je aanvraag te versturen.":"Vul je "+nameOf(f)+" in.");bad.push(f);return;}
+      if(!v||f.type==="checkbox")return;
+      if(f.type==="email"&&!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)){setErr(f,"Dit lijkt geen geldig e-mailadres.");bad.push(f);}
+      else if(f.type==="tel"&&v.replace(/\D/g,"").length<10){setErr(f,"Vul een telefoonnummer van minimaal 10 cijfers in.");bad.push(f);}
+    });
+    return bad;
+  }
+  async function verstuur(data,btn){
+    const oud=btn.innerHTML;btn.disabled=true;btn.classList.add("loading");
+    btn.innerHTML='<span class="spin" aria-hidden="true"></span>Bezig met versturen…';
+    btn.dataset.html=oud;
+    const restore=()=>{btn.disabled=false;btn.classList.remove("loading");btn.innerHTML=oud;};
+    try{
+      const r=await fetch(ENDPOINT,{method:"POST",headers:{"Accept":"application/json","Content-Type":"application/json"},body:JSON.stringify(data)});
+      if(r.ok)return {ok:true,restore};
+      let j={};try{j=await r.json();}catch(e){}
+      restore();return {ok:false,msg:j.errors?j.errors.map(x=>x.message).join(" "):""};
+    }catch(err){restore();return {ok:false};}
+  }
+  const mislukt="Versturen lukte niet. Probeer het nog eens, of bel ons direct op "+TEL+" of mail naar "+MAIL+".";
   document.querySelectorAll("form[data-form]").forEach(form=>{
     const out=form.querySelector(".sent");
+    form.addEventListener("input",e=>{if(e.target.getAttribute("aria-invalid"))clearErr(e.target);});
+    form.addEventListener("change",e=>{if(e.target.type==="checkbox"&&e.target.getAttribute("aria-invalid"))clearErr(e.target);});
+    form.querySelectorAll("textarea[maxlength]").forEach(t=>{
+      const c=holderOf(t).querySelector(".counter");if(!c)return;
+      const upd=()=>{c.textContent=t.value.length+" / "+t.maxLength;};t.addEventListener("input",upd);upd();
+    });
     form.addEventListener("submit",async e=>{
       e.preventDefault();
-      if(form.querySelector(".hp input")&&form.querySelector(".hp input").value)return;
-      const missing=[...form.querySelectorAll("[required]")].filter(f=>!f.value.trim());
-      out.hidden=false;
-      if(missing.length){
-        const names=missing.map(f=>f.closest("label").firstElementChild.textContent.replace("*","").trim().toLowerCase());
-        out.textContent="Vul nog in: "+names.join(", ")+".";missing[0].focus();return;
+      const hp=form.querySelector(".hp input");if(hp&&hp.value)return;
+      out.hidden=true;out.classList.remove("bad");
+      const bad=validate(form);
+      if(bad.length){
+        out.hidden=false;out.classList.add("bad");
+        out.textContent=bad.length===1?"Er ontbreekt nog iets. Kijk even naar het gemarkeerde veld.":"Er ontbreken nog "+bad.length+" dingen. Kijk even naar de gemarkeerde velden.";
+        bad[0].focus();return;
       }
-      const data={type:form.dataset.form};
-      new FormData(form).forEach((v,k)=>{if(k!=="_gotcha")data[k]=String(v).trim();});
+      const data={};
+      new FormData(form).forEach((v,k)=>{if(k==="_gotcha")return;v=String(v).trim();if(!v)return;data[k]=data[k]?data[k]+", "+v:v;});
+      data.formulier=form.dataset.form;
+      data.pagina=document.title;
+      /* leesbare veldnamen in de e-mail; "email" blijft zo, zodat je direct kunt antwoorden */
+      const mail={};
+      Object.keys(data).forEach(k=>{const nk=k==="email"?"email":(k.charAt(0).toUpperCase()+k.slice(1)).replace(/_/g," ");mail[nk]=data[k];});
+      const spoed=/spoed/i.test(data.urgentie||"")||form.dataset.form==="Spoed";
+      mail._subject=(spoed?"SPOED – ":"")+(form.dataset.subject||"Bericht via website")+" – "+(data.naam||data.telefoon||"onbekend")+(data.plaagdier?" ("+data.plaagdier+")":"");
+      const btn=form.querySelector("button[type=submit]");
+      const res=await verstuur(mail,btn);
+      if(!res.ok){out.hidden=false;out.classList.add("bad");out.textContent=res.msg?res.msg+" "+mislukt:mislukt;return;}
       const naam=(data.naam||"").split(" ")[0];
-      data._subject=(form.dataset.subject||"Bericht via website")+" – "+(data.naam||data.telefoon||"");
-      const res=await verstuur(data,form.querySelector("button[type=submit]"));
-      if(res.demo){out.textContent="Het formulier is nog niet gekoppeld. Bel ons op "+TEL+" of mail naar "+MAIL+".";return;}
-      if(!res.ok){out.textContent=mislukt;return;}
-      if(form.dataset.redirect){location.href=ROOT+"bedankt/index.html";return;}
-      out.textContent="Bedankt"+(naam?", "+naam:"")+". We bellen je zo snel mogelijk terug.";form.reset();
+      if(form.hasAttribute("data-redirect")){
+        location.href=ROOT+"bedankt/index.html?n="+encodeURIComponent(naam)+"&t="+encodeURIComponent(form.dataset.form);
+        return;
+      }
+      res.restore();out.hidden=false;out.textContent="Bedankt"+(naam?", "+naam:"")+"! We bellen je zo snel mogelijk terug.";form.reset();
     });
   });
+
+  /* terug via de browser: knoppen niet laten hangen op "Bezig met versturen" */
+  window.addEventListener("pageshow",()=>document.querySelectorAll("button.loading").forEach(b=>{b.disabled=false;b.classList.remove("loading");if(b.dataset.html)b.innerHTML=b.dataset.html;}));
+
+  /* ---------- bedankpagina: persoonlijk maken ---------- */
+  const thx=document.querySelector("[data-thanks]");
+  if(thx){
+    const q=new URLSearchParams(location.search),n=(q.get("n")||"").slice(0,40),t=q.get("t");
+    if(n){thx.textContent="Bedankt, ";const em=document.createElement("em");em.textContent=n;thx.append(em,"!");}
+    const lead=document.querySelector("[data-thanks-lead]");
+    if(lead&&t==="Sollicitatie")lead.textContent="We hebben je sollicitatie goed ontvangen. Binnen een paar werkdagen nemen we contact met je op voor een eerste kennismaking.";
+  }
 
   /* ---------- plaagcheck (alleen op de homepage) ---------- */
   const box=document.getElementById("signs");
