@@ -83,14 +83,26 @@
     btn.innerHTML='<span class="spin" aria-hidden="true"></span>Bezig met versturen…';
     btn.dataset.html=oud;
     const restore=()=>{btn.disabled=false;btn.classList.remove("loading");btn.innerHTML=oud;};
+    /* Als gewone formuliergegevens versturen (zoals Formspree aanraadt): geen extra CORS-controle nodig. */
+    const body=new URLSearchParams();Object.keys(data).forEach(k=>body.append(k,data[k]));
     try{
-      const r=await fetch(ENDPOINT,{method:"POST",headers:{"Accept":"application/json","Content-Type":"application/json"},body:JSON.stringify(data)});
+      const r=await fetch(ENDPOINT,{method:"POST",headers:{"Accept":"application/json"},body});
       if(r.ok)return {ok:true,restore};
       let j={};try{j=await r.json();}catch(e){}
-      restore();return {ok:false,msg:j.errors?j.errors.map(x=>x.message).join(" "):""};
-    }catch(err){restore();return {ok:false};}
+      const msg=j.errors?j.errors.map(x=>x.message).join(" "):(j.error||"");
+      console.error("Formspree antwoordde met status "+r.status,j);
+      restore();return {ok:false,msg,status:r.status};
+    }catch(err){
+      console.error("Geen verbinding met Formspree:",err);
+      restore();return {ok:false,network:true};
+    }
   }
-  const mislukt="Versturen lukte niet. Probeer het nog eens, of bel ons direct op "+TEL+" of mail naar "+MAIL+".";
+  /* Noodroute: als versturen mislukt, kan de bezoeker de aanvraag met één klik mailen. */
+  function mailFallback(data){
+    const lines=Object.keys(data).filter(k=>k.charAt(0)!=="_").map(k=>k+": "+data[k]);
+    const body=lines.join("\n").slice(0,1800);
+    return "mailto:"+MAIL+"?subject="+encodeURIComponent(data._subject||"Aanvraag via website")+"&body="+encodeURIComponent(body);
+  }
   document.querySelectorAll("form[data-form]").forEach(form=>{
     const out=form.querySelector(".sent");
     form.addEventListener("input",e=>{if(e.target.getAttribute("aria-invalid"))clearErr(e.target);});
@@ -120,7 +132,14 @@
       mail._subject=(spoed?"SPOED – ":"")+(form.dataset.subject||"Bericht via website")+" – "+(data.naam||data.telefoon||"onbekend")+(data.plaagdier?" ("+data.plaagdier+")":"");
       const btn=form.querySelector("button[type=submit]");
       const res=await verstuur(mail,btn);
-      if(!res.ok){out.hidden=false;out.classList.add("bad");out.textContent=res.msg?res.msg+" "+mislukt:mislukt;return;}
+      if(!res.ok){
+        out.hidden=false;out.classList.add("bad");out.textContent="";
+        const p1=document.createElement("span");
+        p1.textContent=(res.network?"Versturen lukte niet: er kon geen verbinding worden gemaakt.":"Versturen lukte niet"+(res.msg?": "+res.msg.replace(/[.!]?$/,"."):" (foutcode "+res.status+")."))+" Je kunt je aanvraag ook direct mailen, of bel ons op "+TEL+".";
+        const a=document.createElement("a");a.className="btn btn-ghost";a.href=mailFallback(mail);a.textContent="Verstuur via e-mail";
+        const wrap=document.createElement("span");wrap.style.cssText="display:grid;gap:10px";wrap.append(p1,a);out.append(wrap);
+        return;
+      }
       const naam=(data.naam||"").split(" ")[0];
       if(form.hasAttribute("data-redirect")){
         location.href=ROOT+"bedankt/index.html?n="+encodeURIComponent(naam)+"&t="+encodeURIComponent(form.dataset.form);
