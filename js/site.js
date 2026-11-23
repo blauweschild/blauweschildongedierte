@@ -1,3 +1,4 @@
+(function(){var s=document.createElement("script");s.src=(document.body.dataset.root||"")+"js/ads-tag.js";s.defer=true;document.head.appendChild(s);})();
 /* Blauweschild – gedeeld script voor alle pagina's */
 (function(){
   const ROOT=document.body.dataset.root||"";
